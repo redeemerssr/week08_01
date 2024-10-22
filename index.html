@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜奖游戏</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        td {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: azure;
+        }
+        .miss {
+            color: red;
+            background-color: rgb(238, 196, 196);
+        }
+        .win {
+            background-color: #ccffcc; /* 中奖格子背景颜色 */
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <table id="gameTable">
+        <tr>
+            <td>🤷</td>
+            <td>🤷</td>
+            <td>🤷</td>
+        </tr>
+        <tr>
+            <td>🤷</td>
+            <td>🤷</td>
+            <td>🤷</td>
+        </tr>
+        <tr>
+            <td>🤷</td>
+            <td>🤷</td>
+            <td>🤷</td>
+        </tr>
+    </table>
+    <div id="result"></div>
+
+    <script>
+        const table = document.getElementById('gameTable');
+        const cells = table.getElementsByTagName('td');
+        let prizeCell;
+        let gameEnded = false;
+        const resultDiv = document.getElementById('result');
+        let clickCount = 0;
+
+        function setupGame() {
+            const randomIndex = Math.floor(Math.random() * cells.length);
+            prizeCell = cells[randomIndex];
+            prizeCell.dataset.prize = 'true'; // 使用自定义数据属性标记奖品格子
+            clickCount = 0; // 重置点击计数
+        }
+
+        function checkWin(cell) {
+            clickCount++; // 增加点击计数
+            if (cell.dataset.prize === 'true') {
+                cell.innerHTML = '🎁';
+                cell.classList.add('win');
+                gameEnded = true;
+                disableCells();
+                resultDiv.innerHTML = `第${clickCount}次点击：恭喜中奖😃`;
+            } else {
+                cell.classList.add('miss');
+                cell.innerHTML = '❌';
+                resultDiv.innerHTML = `第${clickCount}次点击：未中奖☹️`;
+            }
+        }
+
+        function disableCells() {
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].onclick = null;
+            }
+        }
+
+        setupGame();
+
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].onclick = function() {
+                if (!gameEnded) {
+                    checkWin(this);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
